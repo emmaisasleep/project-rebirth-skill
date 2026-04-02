@@ -30,9 +30,9 @@ project-rebirth-skill/
 `project-rebirth/SKILL.md` is the executable definition. Its YAML frontmatter declares the skill `name`, `description`, and trigger phrases. The body defines the four-phase workflow:
 
 1. **Clarification** — ask scoping questions before touching any code
-1. **Codebase Analysis** — run scripts, extract intent, map data flows
-1. **Generate Rebirth Kit** — produce `{PROJECT_NAME}_rebirth/` with PRD.md, CLAUDE.md, standards.yaml
-1. **Review & Handoff** — summarize findings, flag `[REQUIRES INPUT]` sections
+2. **Codebase Analysis** — run scripts, extract intent, map data flows
+3. **Generate Rebirth Kit** — produce `{PROJECT_NAME}_rebirth/` with PRD.md, CLAUDE.md, standards.yaml
+4. **Review & Handoff** — summarize findings, flag `[REQUIRES INPUT]` sections
 
 ## Scripts
 
