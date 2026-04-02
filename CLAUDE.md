@@ -6,26 +6,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **Claude Code skill definition** — not an application. It packages the `project-rebirth` skill, which reverse-engineers an existing codebase into a "Rebirth Kit" (PRD, CLAUDE.md, standards config) for clean-slate rebuilds.
 
-The skill is invoked via `/project-rebirth` in Claude Code sessions. It is consumed by the `everything-claude-code` plugin ecosystem.
+The skill is invoked via `/project-rebirth` in Claude Code sessions.
 
 ## Repository Structure
 
 ```text
 project-rebirth-skill/
-  SKILL.md                    # Skill definition (frontmatter + workflow instructions)
-  scripts/
-    structural-survey.sh      # Phase 2.1: file tree + package manifests
-    intent-extraction.sh      # Phase 2.2: routes, models, tests, env vars
-    friction-mapping.sh       # Phase 2.3: debt markers, file complexity, deps
-  templates/
-    PRD-template.md           # Output template for the Product Requirements Doc
-    CLAUDE-template.md        # Output template for the rebuild's CLAUDE.md
-    standards-template.yaml   # Output template for architectural/linting rules
+  project-rebirth/
+    SKILL.md                    # Skill definition (frontmatter + workflow instructions)
+    scripts/
+      structural-survey.sh      # Phase 2.1: file tree + package manifests
+      intent-extraction.sh      # Phase 2.2: routes, models, tests, env vars
+      friction-mapping.sh       # Phase 2.3: debt markers, file complexity, deps
+      data-flow.sh              # Phase 2.4: inputs, transformations, outputs, side effects
+    templates/
+      PRD-template.md           # Output template for the Product Requirements Doc
+      CLAUDE-template.md        # Output template for the rebuild's CLAUDE.md
+      standards-template.yaml   # Output template for architectural/linting rules
 ```
 
 ## Skill Anatomy
 
-`SKILL.md` is the executable definition. Its YAML frontmatter declares the skill `name`, `description`, and trigger phrases. The body defines the four-phase workflow:
+`project-rebirth/SKILL.md` is the executable definition. Its YAML frontmatter declares the skill `name`, `description`, and trigger phrases. The body defines the four-phase workflow:
 
 1. **Clarification** — ask scoping questions before touching any code
 1. **Codebase Analysis** — run scripts, extract intent, map data flows
