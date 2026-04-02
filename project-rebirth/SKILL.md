@@ -50,6 +50,11 @@ Before analyzing anything, ask the user these questions to scope the work:
 
 Do not proceed to Phase 2 until you have answers (or explicit "skip" / "you decide").
 
+**Fallback when questions are skipped:**
+- Q2–Q3 skipped (blockers/lessons): proceed, but mark PRD §7–8 and CLAUDE.md `Prohibited Patterns` as `[REQUIRES INPUT — blockers not provided]`.
+- Q4 skipped (target stack): defer the stack recommendation to PRD §9 (Open Questions), flagged as `[BLOCKING]`.
+- Q5 skipped (scope): assume full system scope; note the assumption prominently in the PRD executive summary.
+
 ### Phase 2: Codebase Analysis
 
 Systematically extract intent from the legacy repo. Work through these steps in order. Adapting the pre-prepared scripts in `scripts/` as needed.
@@ -90,14 +95,20 @@ Cross-reference findings with the user's stated blockers from Phase 1.
 
 #### Step 2.4 — Data Flow Mapping
 
-Trace the critical paths:
+Run the data flow extraction script:
+
+```bash
+bash scripts/data-flow.sh
+```
+
+Then synthesize its output into four categories — describe each in user-facing, not implementation, terms:
 
 - **Inputs**: What data enters the system? (HTTP requests, file uploads, CLI args, message queues, cron triggers)
 - **Transformations**: What business logic is applied? (validation, computation, enrichment, aggregation)
 - **Outputs**: What leaves the system? (API responses, rendered UI, reports, notifications, database writes)
 - **Side effects**: External service calls, email sending, webhook triggers, audit logging
 
-Document these as user-facing workflows, not implementation details.
+These categories map directly into PRD §3 workflow steps and the CLAUDE.md Rebuild Sequence.
 
 ### Phase 3: Generate the Rebirth Kit
 
@@ -120,6 +131,22 @@ Use the template structure provided by `templates/CLAUDE-template.md`
 #### 3.3 — standards.yaml
 
 Architectural and linting rules in a machine-parseable format. Use YAML for readability with the template struture provided by `templates/standards-template.yaml`
+
+#### Synthesis Map: Script Output → Templates
+
+After running the four analysis scripts, use this mapping to populate the templates. Never leave a placeholder unfilled — mark unresolvable gaps `[REQUIRES INPUT: {what is needed and from whom}]`.
+
+| Script output | → | Template section |
+|---|---|---|
+| Phase 2.1 structural survey | → | PRD §1–2 (summary, value prop); standards.yaml `project` block |
+| Phase 2.2 API routes + models | → | PRD §3 (workflows), PRD §4 (data model), PRD §5 (integrations) |
+| Phase 2.2 test descriptions | → | PRD §3 success criteria; PRD §10 success metrics |
+| Phase 2.3 debt markers + complexity | → | PRD §7.2 (what failed); standards.yaml `banned_patterns` |
+| Phase 2.3 dep bloat | → | CLAUDE.md Prohibited Patterns; standards.yaml `dependency_rules` |
+| Phase 2.4 inputs/outputs | → | PRD §3 workflow triggers and outputs; CLAUDE.md Rebuild Sequence |
+| Phase 2.4 side effects | → | PRD §5 (integration points); PRD §6 NFRs (reliability, retry) |
+| Phase 1 Q2–Q3 (blockers) | → | PRD §7–8 (lessons learned, negative constraints) |
+| Phase 1 Q4 (target stack) | → | CLAUDE.md Style & Conventions; standards.yaml `preferred_packages` |
 
 ### Phase 4: Review & Handoff
 

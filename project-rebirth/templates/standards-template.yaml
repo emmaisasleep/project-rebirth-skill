@@ -4,38 +4,46 @@ project:
   source_analysis: "legacy repo at {path/url}"
 
 banned_patterns:
-  - pattern: "{description}"
-    reason: "{why}"
-    alternative: "{what to do instead}"
-    severity: "error"  # error = block, warn = flag
+  - pattern: "{description — be specific, e.g. 'synchronous blocking I/O in request handlers'}"
+    reason: "{why — e.g. 'caused 10s response times under moderate load in legacy system'}"
+    alternative: "{what to do instead — e.g. 'use async/await with non-blocking drivers'}"
+    rationale: "{link to PRD §8.N or lesson from legacy system}"
+    exceptions: "{if any — e.g. 'allowed in migration scripts run outside the request path'; otherwise: none}"
+    severity: "error"  # error = block commit/build, warn = flag in review
 
 required_patterns:
-  - pattern: "{description}"
-    reason: "{why}"
-    enforcement: "{how to check — lint rule, test, hook}"
+  - pattern: "{description — e.g. 'all external HTTP calls must set explicit timeouts'}"
+    reason: "{why — e.g. 'uncapped outbound calls caused cascading failures in legacy system'}"
+    rationale: "{link to PRD §5 integration point or NFR}"
+    enforcement: "{how to check — e.g. 'lint rule: no-http-without-timeout', 'pre-commit: grep for timeout', 'test: verify timeout config in integration tests'}"
 
 file_structure:
-  max_file_lines: 300
-  max_nesting_depth: 3
+  max_file_lines: 400  # 200-400 typical; 800 absolute max — flag for refactoring above 600
+  max_nesting_depth: 3  # cognitive load increases sharply beyond 3 levels
   required_directories:
     - src/
     - tests/
     - docs/
+  enforcement:
+    max_file_lines: "pre-commit: find . -name '*.{ts,py,java,go}' | xargs wc -l | awk '$1 > 400 {print}'"
+    max_nesting_depth: "manual review or lint rule (e.g., max-depth ESLint rule)"
 
 dependency_rules:
-  max_direct_dependencies: {N}
+  max_direct_dependencies: null  # typical range: 15-30 for apps, 5-10 for libraries; null = no limit enforced
   banned_packages:
-    - name: "{package}"
-      reason: "{why}"
+    - name: "{package name}"
+      reason: "{why — e.g. 'abandoned, security CVEs, was the source of major coupling in legacy system'}"
+      alternative: "{recommended replacement}"
   preferred_packages:
     - category: "{e.g., HTTP client}"
-      package: "{recommendation}"
-      reason: "{why}"
+      package: "{recommendation — e.g., 'axios for Node.js, requests for Python'}"
+      reason: "{why — e.g. 'team familiarity, good TypeScript types, consistent with existing stack'}"
 
 testing:
-  minimum_coverage: "{percentage}"
+  minimum_coverage: "80%"  # adjust based on PRD risk level — safety-critical: 95%+, internal tools: 70%+
   required_test_types:
     - unit
     - integration
+    # - e2e  # uncomment if E2E is mandatory
   critical_paths:
-    - "{workflow from PRD §3}"
+    - "{workflow name from PRD §3 — these MUST have integration or E2E coverage}"
