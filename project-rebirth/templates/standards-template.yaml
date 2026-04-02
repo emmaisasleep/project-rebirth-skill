@@ -1,0 +1,41 @@
+project:
+  name: "{PROJECT_NAME}"
+  generated: "{date}"
+  source_analysis: "legacy repo at {path/url}"
+
+banned_patterns:
+  - pattern: "{description}"
+    reason: "{why}"
+    alternative: "{what to do instead}"
+    severity: "error"  # error = block, warn = flag
+
+required_patterns:
+  - pattern: "{description}"
+    reason: "{why}"
+    enforcement: "{how to check — lint rule, test, hook}"
+
+file_structure:
+  max_file_lines: 300
+  max_nesting_depth: 3
+  required_directories:
+    - src/
+    - tests/
+    - docs/
+
+dependency_rules:
+  max_direct_dependencies: {N}
+  banned_packages:
+    - name: "{package}"
+      reason: "{why}"
+  preferred_packages:
+    - category: "{e.g., HTTP client}"
+      package: "{recommendation}"
+      reason: "{why}"
+
+testing:
+  minimum_coverage: "{percentage}"
+  required_test_types:
+    - unit
+    - integration
+  critical_paths:
+    - "{workflow from PRD §3}"
